@@ -20,7 +20,7 @@ app.get("/notes", function(req,res){
 });
 
 //  * GET `*` - Should return the `index.html` file
-app.get("*", function(req,res){
+app.get("/", function(req,res){
     res.sendFile(__dirname = "/index.html")
 });
 
