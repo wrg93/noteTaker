@@ -11,22 +11,22 @@ app.use(express.static("public"))
 // set up and listed to PORT
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, function(){
-    console.log("Server is runnign on http://localhost:" + PORT)
+    console.log("Server is running on http://localhost:" + PORT)
 });
 
 //* GET `/notes` - Should return the `notes.html` file.
 app.get("/notes", function(req,res){
-    res.sendFile(__dirname + "/notes.html")
+    res.sendFile(__dirname + "notes.html")
 });
 
 //  * GET `*` - Should return the `index.html` file
 app.get("/", function(req,res){
-    res.sendFile(__dirname = "/index.html")
+    res.sendFile(__dirname = "index.html")
 });
 
 // * GET `/api/notes` - Should read the `db.json` file and return all saved notes as JSON.
 app.get("/api/notes",function(req, res){
-    fs.readFile(__dirname + "/db.json", "utf8", (err,notes) => {
+    fs.readFile(__dirname + "db.json", "utf8", (err,notes) => {
         if (err) throw err;
         const parseData = JSON.parse(notes)
         return res.json(parseData)
@@ -47,7 +47,7 @@ app.post("api/notes", function(req, res){
         savedNotes[i].id = counter++;
     }
 
-    fs.writeFile(__dirname + "/db.json", JSON.stringify(savedNotes), (err) =>{
+    fs.writeFile(__dirname + "db.json", JSON.stringify(savedNotes), (err) =>{
         if (err) throw err;
     });
     res.send(savedNotes)
@@ -57,13 +57,13 @@ app.post("api/notes", function(req, res){
 app.delete("/api.notes/:id", function(req,res){
     const noteId = req.params.id;
 
-    fs.readFile(__dirname + "/db.json", "utf8", (err,notes) =>{
+    fs.readFile(__dirname + "db.json", "utf8", (err,notes) =>{
         if (err) throw err;
             const parseData = JSON.parse(notes);
             savedNotes = parseData.filter(function(num){
                 return num.id != noteId;
             });
-            fs.writeFile(__dirname + "/db.json", JSON.stringify(savedNotes), (err) =>{
+            fs.writeFile(__dirname + "db.json", JSON.stringify(savedNotes), (err) =>{
                 if (err) throw err;
             })
     })
