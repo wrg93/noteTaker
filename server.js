@@ -61,7 +61,7 @@ app.delete("/api.notes/:id", function(req,res){
         if (err) throw err;
             const parseData = JSON.parse(notes);
             savedNotes = parseData.filter(function(num){
-                return num.id! = noteId;
+                return num.id != noteId;
             });
             fs.writeFile(__dirname + "/db.json", JSON.stringify(savedNotes), (err) =>{
                 if (err) throw err;
