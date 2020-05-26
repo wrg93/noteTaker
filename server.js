@@ -16,17 +16,17 @@ app.listen(PORT, function(){
 
 //* GET `/notes` - Should return the `notes.html` file.
 app.get("/notes", function(req,res){
-    res.sendFile(__dirname + "notes.html")
+    res.sendFile(__dirname + "/public/notes.html")
 });
 
 //  * GET `*` - Should return the `index.html` file
 app.get("/", function(req,res){
-    res.sendFile(__dirname = "index.html")
+    res.sendFile(__dirname = "/public/index.html")
 });
 
 // * GET `/api/notes` - Should read the `db.json` file and return all saved notes as JSON.
 app.get("/api/notes",function(req, res){
-    fs.readFile(__dirname + "db.json", "utf8", (err,notes) => {
+    fs.readFile(__dirname + "/db/db.json", "utf8", (err,notes) => {
         if (err) throw err;
         const parseData = JSON.parse(notes)
         return res.json(parseData)
@@ -35,7 +35,7 @@ app.get("/api/notes",function(req, res){
 
 //   * POST `/api/notes` - Should receive a new note to save on the request body, add it to the `db.json` file, and then return the new note to the client.
 var savedNotes = [];
-app.post("api/notes", function(req, res){
+app.post("/api/notes", function(req, res){
 
     const newNote = req.body;
     const id = 1;
@@ -47,7 +47,7 @@ app.post("api/notes", function(req, res){
         savedNotes[i].id = counter++;
     }
 
-    fs.writeFile(__dirname + "db.json", JSON.stringify(savedNotes), (err) =>{
+    fs.writeFile(__dirname + "/db/db.json", JSON.stringify(savedNotes), (err) =>{
         if (err) throw err;
     });
     res.send(savedNotes)
@@ -57,13 +57,13 @@ app.post("api/notes", function(req, res){
 app.delete("/api.notes/:id", function(req,res){
     const noteId = req.params.id;
 
-    fs.readFile(__dirname + "db.json", "utf8", (err,notes) =>{
+    fs.readFile(__dirname + "/db/db.json", "utf8", (err,notes) =>{
         if (err) throw err;
             const parseData = JSON.parse(notes);
             savedNotes = parseData.filter(function(num){
                 return num.id != noteId;
             });
-            fs.writeFile(__dirname + "db.json", JSON.stringify(savedNotes), (err) =>{
+            fs.writeFile(__dirname + "/db/db.json", JSON.stringify(savedNotes), (err) =>{
                 if (err) throw err;
             })
     })
