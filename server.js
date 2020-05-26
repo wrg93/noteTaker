@@ -1,71 +1,71 @@
-//Required
+// Required packages
 const express = require("express");
 const fs = require("fs");
 const app = express();
 
-//set up express app
-app.use(express.urlencoded({extended: true}))
+// set up express app
+app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(express.static("public"))
 
-// set up and listed to PORT
+// set up and listen to port
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, function(){
     console.log("Server is running on http://localhost:" + PORT)
 });
 
-//* GET `/notes` - Should return the `notes.html` file.
+// displays notes html
 app.get("/notes", function(req,res){
     res.sendFile(__dirname + "/public/notes.html")
 });
 
-//  * GET `*` - Should return the `index.html` file
-app.get("/", function(req,res){
-    res.sendFile(__dirname + "/public/index.html")
-});
-
-// * GET `/api/notes` - Should read the `db.json` file and return all saved notes as JSON.
+// route that reads json file and sends to AJAX request
 app.get("/api/notes",function(req, res){
-    fs.readFile(__dirname + "/db/db.json", "utf8", (err,notes) => {
-        if (err) throw err;
-        const parseData = JSON.parse(notes)
+   fs.readFile(__dirname + "/db/db.json", "utf8", (err, notes) => {
+    if (err) throw err;
+        const parseData= JSON.parse(notes)
         return res.json(parseData)
     });
 });
+     
+//displays note take homepage
+app.get("/",function(req, res){
+    res.sendFile(__dirname + "/public/index.html")
+});
 
-//   * POST `/api/notes` - Should receive a new note to save on the request body, add it to the `db.json` file, and then return the new note to the client.
-var savedNotes = [];
-app.post("/api/notes", function(req, res){
+//gets access to id of deleted note, reads db.json file, and displays new arry with deleted note
+app.delete("/api/notes/:id", function(req,res){
+    const noteId = req.params.id;
+    
+    fs.readFile(__dirname + "/db/db.json", "utf8", (err, notes) => {
+        if (err) throw err;
+            const parseData= JSON.parse(notes)
+            savedNotes=parseData.filter(function(num){
+            return num.id!=noteId;  
+        });
+        fs.writeFile(__dirname + "/db/db.json",JSON.stringify(savedNotes), (err) =>{
+            if (err) throw err;   
+        });
+        res.send(savedNotes)
+    });
+});
 
-    const newNote = req.body;
-    const id = 1;
-    newNote.id=id;
-    savedNotes.push(newNote);
+// receives JSON note from user, adds id to note, pushes to array, and writes array to db.json file.
+var savedNotes=[];
+app.post("/api/notes", function(req,res){
+   
+  const newNote=req.body
+    const id = 1
+    newNote.id=id
+    savedNotes.push(newNote)
 
-    var counter = 1;
-    for (var i=0; i <savedNotes.length; i++){
+    var counter = 1
+    for (var i=0; i < savedNotes.length; i++){
         savedNotes[i].id = counter++;
     }
 
-    fs.writeFile(__dirname + "/db/db.json", JSON.stringify(savedNotes), (err) =>{
-        if (err) throw err;
+    fs.writeFile(__dirname + "/db/db.json",JSON.stringify(savedNotes), (err) =>{
+        if (err) throw err;   
     });
-    res.send(savedNotes)
+res.send(savedNotes)
 });
-
-// * DELETE `/api/notes/:id` - Should receive a query parameter containing the id of a note to delete. This means you'll need to find a way to give each note a unique `id` when it's saved. In order to delete a note, you'll need to read all notes from the `db.json` file, remove the note with the given `id` property, and then rewrite the notes to the `db.json` file.
-app.delete("/api/notes/:id", function(req,res){
-    const noteId = req.params.id;
-
-    fs.readFile(__dirname + "/db/db.json", "utf8", (err,notes) =>{
-        if (err) throw err;
-            const parseData = JSON.parse(notes);
-            savedNotes = parseData.filter(function(num){
-                return num.id!=noteId;
-            });
-            fs.writeFile(__dirname + "/db/db.json", JSON.stringify(savedNotes), (err) =>{
-                if (err) throw err;
-            })
-        res.send(savedNotes)
-    })
-})
