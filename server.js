@@ -21,7 +21,7 @@ app.get("/notes", function(req,res){
 
 //  * GET `*` - Should return the `index.html` file
 app.get("/", function(req,res){
-    res.sendFile(__dirname = "/public/index.html")
+    res.sendFile(__dirname + "/public/index.html")
 });
 
 // * GET `/api/notes` - Should read the `db.json` file and return all saved notes as JSON.
